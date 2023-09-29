@@ -121,7 +121,7 @@ const AddAccount = () => {
           <Col className="d-flex flex-column justify-content-between">
             <div className="d-flex flex-column">
               <Input
-                className="text-end"
+                className="text-end mt-2 mt-md-0"
                 error={formik.errors.email}
                 touched={formik.touched.email}
                 onBlur={formik.handleBlur}
