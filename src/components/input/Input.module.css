@@ -1,0 +1,22 @@
+.input {
+  width: fit-content;
+  position: relative;
+  & input {
+    border-radius: 10px 10px 0 0 !important;
+    padding-left: 20px !important;
+  }
+}
+
+.under {
+  width: 100%;
+  height: 5px;
+  background-color: var(--mainColor);
+}
+.icon {
+  position: absolute;
+  top: 30%;
+  z-index: 1000;
+  
+  left: 10px;
+
+}

@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  --mainColor : #28465C;
+  --main2 : #1D3242;
+}
+body {
+  font-family: 'Almarai', sans-serif !important; 
+}
+
+.form-floating>.form-control:focus~label, .form-floating>.form-control:not(:placeholder-shown)~label, .form-floating>.form-select~label {
+  text-align: start;
+  font-size: 13px;
+  transform: translateY(-7px);
+}
+
+input {
+  text-align: start;
+  direction: rtl;
+}
+
+img {
+  max-width: 100%;
+}
+
+button:hover {
+  border-radius: 10px !important;
+}
+
+button {
+  transition: 0.5s !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+}
+
+.btn-main {
+    background-color: var(--mainColor);
+
+  &:hover {
+    border: 1px solid var(--mainColor) !important;
+    background-color: transparent !important;
+    color: var(--mainColor) !important;  
+  }
+  &:disabled {
+    background-color: var(--main2) !important;
+  }
+  &:active {
+    background-color: var(--main2) !important;
+  }
+  &:focus {
+    background-color: var(--main2) !important;
+  }
+}
+
+.form-control.is-invalid, .was-validated .form-control:invalid {
+  background: none;
+}
+
+.form-floating>.form-control:focus, .form-floating>.form-control:not(:placeholder-shown) {
+  padding-top: 1.7rem !important;
+}
+
+.mainTitle {
+  color: var(--mainColor);
+  font-weight: bold;
+  font-size: 20px;
+}
