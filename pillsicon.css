@@ -1,0 +1,27 @@
+.rectangle2 {
+    width: 400px;
+    height:200px;
+    background-color: #1d3242;
+    border: 1px solid #ebecec;
+    border-radius: 35px;
+   
+    position: relative;
+    left: 50;
+    cursor: pointer;
+   
+
+
+}
+.te2{
+    font-size: 40;
+    font-family: system-ui;
+    color:aliceblue ;
+    position: relative;
+    bottom: 50;
+    left: 90;
+}
+.image2{
+position: relative;
+left:240;
+top:60;
+}
