@@ -5,11 +5,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toggle/style.css" // for ES6 modules
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

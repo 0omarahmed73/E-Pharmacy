@@ -10,8 +10,11 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import ButtonSubmit from './../../components/ButtonSubmit';
 import useDocumentTitle from "../../hooks/useDocumentTitle";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 const Login = () => {
   useDocumentTitle('تسجيل الدخول');
+  const {login} =  useContext(AuthContext);
   const formik = useFormik({
     validateOnMount : true,
     initialValues: {
@@ -23,10 +26,9 @@ const Login = () => {
       password: yup.string().required("الرجاء التاكد من ادخال كلمة المرور").min(6 , "كلمة المرور يجب ان تكون اكبر من 6 أحرف"),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      login(values.email , values.password)
     },
   });
-  console.log(formik);
   return (
     <div className={style.login}>
       <Container className="d-flex vh-100 flex-md-row align-items-center ">

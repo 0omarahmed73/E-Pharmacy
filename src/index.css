@@ -13,12 +13,18 @@ body {
   font-family: 'Almarai', sans-serif !important; 
 }
 
-.form-floating>.form-control:focus~label, .form-floating>.form-control:not(:placeholder-shown)~label, .form-floating>.form-select~label {
+.form-floating>.form-control:focus~label, .form-floating>.form-control:not(:placeholder-shown)~label {
   text-align: start;
   font-size: 13px;
   transform: translateY(-7px);
 }
+.form-floating>.form-select~label {
+  text-align: start;
+  font-size: 11px;
+  transform: translateY(-12px);
+  
 
+}
 input {
   text-align: start;
   direction: rtl;
@@ -51,9 +57,11 @@ button {
   }
   &:active {
     background-color: var(--main2) !important;
+    color: white !important;
   }
   &:focus {
     background-color: var(--main2) !important;
+    color: white !important;
   }
 }
 
