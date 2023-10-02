@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --greenColor: #EBF9EA
+}
+
+body {
+  font-family: 'Almarai', sans-serif !important;
+}
+
+.container-all {
+  width: 100%;
+  padding: 0 0.75rem;
+  display: flex;
+  margin: 10px auto;
+  flex-direction: column;
+  align-items: center;
+  /* sm */
+  max-width: 576px;
+
+  @media screen and (min-width:768px) {
+    & {
+      max-width: 768px;
+    }
+  }
+
+  /* sm */
+  @media screen and (min-width:992px) {
+    & {
+      max-width: 992px;
+    }
+  }
+
+  /* lg */
+  @media screen and (min-width:1200px) {
+    & {
+      max-width: 1200px;
+    }
+  }
+}
+
+.container {
+  margin: 10px auto;
+  background-color: var(--greenColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  width: fit-content;
+  height: fit-content;
+}
+
+.list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: start;
+  align-items: center;
+  padding-block: 10px;
+}
+
+
+li a {
+  all: unset;
+  text-transform: capitalize;
+  text-decoration: none;
+  color: #8E9B9E;
+  cursor: pointer;
+  font-size: 16px;
+  display: block;
+  width: 180px;
+  padding: 10px 10px 10px 20px;
+  margin: 0;
+  border-radius: 20px;
+  transition: 0.5s;
+}
+
+.active {
+  background-color: #293134;
+  color: white;
+}
+
+.icon-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .icon {
+    background-color: var(--greenColor);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    border-radius: 20px;
+
+    & i {
+      font-size: 20px;
+    }
+  }
+
+  .text {
+    font-weight: 400 !important;
+  }
+}
+
+button {
+  
+}
