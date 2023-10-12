@@ -1,21 +1,34 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./Pages/Login/Login";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import DefaultLayout from "./Layout/DefaultLayout/DefaultLayout";
 import AddAccount from "./Pages/AddAccount/AddAccount";
+import Stock from "./Pages/Stock/Stock";
+import Dispense from "./Pages/Stock/Dispense/Dispense";
+import NewOrder from "./Pages/Stock/NewOrder/NewOrder";
+import Medicine from "./Pages/Stock/Medicine/Medicine";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 
 function App() {
+  const {user} = useContext(AuthContext)
   return (
     <>
     <Routes>
-      <Route path='/login' element={<Login />} />
-      <Route path='/' element={<DefaultLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path='stock' element={<Dashboard />} />
-        <Route path='patients' element={<Dashboard />} />
-        <Route path='reports' element={<Dashboard />} />
-        <Route path='add-new-account' element={<AddAccount />} />
+      <Route path='/login' element={!user ? <Login /> : <Navigate to='/'/> } />
+      <Route path='/' element={user ? <DefaultLayout /> : <Navigate to='/login' />}>
+        <Route index element={user ? <Dashboard /> : <Navigate to='/login' /> } />
+        <Route path='stock' element={user ? <Dashboard /> : <Navigate to='/login' /> } />
+        <Route path='patients' element={user ? <Dashboard /> : <Navigate to='/login' /> } />
+        <Route path='reports' element={user ? <Dashboard /> : <Navigate to='/login' /> } />
+        <Route path='add-new-account' element={user ? <AddAccount /> : <Navigate to='/login' /> } />
       </Route>
+      <Route path='/stock' element={user ? <DefaultLayout /> : <Navigate to='/login' />}>
+        <Route index element={user ? <Stock /> : <Navigate to='/login' />} />
+        <Route path='medicine-dispense' element={user ? <Dispense /> : <Navigate to='/login' />}/>
+        <Route path='new-order' element={user ? <NewOrder /> : <Navigate to='/login' />} />
+        <Route path='medicines' element={user ? <Medicine /> : <Navigate to='/login' />} />
+        </Route>
     </Routes>
     </>
   );

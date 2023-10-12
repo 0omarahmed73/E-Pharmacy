@@ -1,0 +1,27 @@
+label {
+  margin-top: -7px;
+  font-size: 13px;
+  color: rgba(var(--bs-body-color-rgb),.65) ;
+  opacity: 0.65 !important;
+}
+input {
+  border-radius: 10px 10px 0 0 !important;
+  padding-left: 20px !important;
+  }
+.under {
+  width: 100%;
+  height: 5px;
+  background-color: var(--mainColor);
+}
+
+.icon {
+  position: absolute;
+  top: 30%;
+  z-index: 0;
+  left: 10px;
+
+}
+
+.all {
+  position: relative;
+}

@@ -43,8 +43,8 @@ const AddAccount = () => {
   });
   return (
     <div style={{margin : 'auto'} } className={`${style.addAccount} d-flex flex-column px-sm-5 px-0`}>
-      <p className="mainTitle">إضافة حساب جديد</p>
-      <Form onSubmit={formik.handleSubmit}>
+      <p className="mainTitle mb-2">إضافة حساب جديد</p>
+      <Form onSubmit={formik.handleSubmit} className="pb-4">
         <Row lg="2" xs="1" md='2'>
           <Col>
             <Input
@@ -121,7 +121,7 @@ const AddAccount = () => {
           <Col className="d-flex flex-column justify-content-between">
             <div className="d-flex flex-column">
               <Input
-                className="text-end"
+                className="text-end mt-2 mt-md-0"
                 error={formik.errors.email}
                 touched={formik.touched.email}
                 onBlur={formik.handleBlur}

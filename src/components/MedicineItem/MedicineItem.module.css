@@ -1,0 +1,42 @@
+.item {
+  border: 2px solid var(--mainColor);   
+  display: flex;
+  border-radius: 20px;
+  width: 500px;
+  padding-inline:20px 15px;
+  padding-block: 5px;
+  align-items: center;
+  height: fit-content;
+}
+h1.index {
+  flex : 0.5;
+  color: var(--mainColor);
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+h1.medicine { 
+  color: var(--mainColor);
+  font-weight: 600;
+  flex: 2;
+  margin: 0;
+  text-align: end;
+  font-size: 21px;
+}
+.icons { 
+  flex: 0.2;
+  display: flex;
+  gap: 5px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  & > * {
+    transition: all 0.3s linear;
+    &:hover {
+      color: var(--mainColor);
+    }
+  }
+}
+
+

@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: start;
-    padding-top:40px ;
+    padding-top:20px ;
     min-height: 100vh;
     .logo {
       width: 130px !important;
@@ -16,7 +16,8 @@
     }
   }
   .nav , .navAll{
-    position: relative;
+    position: fixed;
+    z-index: 1000;
     left: -0.2px;
     /* margin-right: 1px !important; */
     height: 50px;
@@ -29,3 +30,13 @@
 }
 
 
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.283);
+  width: 100%;
+  height: 100%;
+  z-index: 100; /*anything higher than z-index: 1;*/
+}

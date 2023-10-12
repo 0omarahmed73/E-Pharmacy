@@ -8,25 +8,29 @@ import style from "./Login.module.css";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import ButtonSubmit from './../../components/ButtonSubmit';
+import ButtonSubmit from "./../../components/ButtonSubmit";
 import useDocumentTitle from "../../hooks/useDocumentTitle";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import axiosApi from "../../data/axios";
 const Login = () => {
-  useDocumentTitle('تسجيل الدخول');
+  useDocumentTitle("تسجيل الدخول");
+  const { login , error , loading } = useContext(AuthContext);
   const formik = useFormik({
-    validateOnMount : true,
+    validateOnMount: true,
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: yup.object().shape({
-      email: yup.string().required('الرجاء ادخال البريد الإلكتروني').email('الرجاء التأكد من صحة البريد الإلكتروني'),
-      password: yup.string().required("الرجاء التاكد من ادخال كلمة المرور").min(6 , "كلمة المرور يجب ان تكون اكبر من 6 أحرف"),
+      email: yup.string().required("الرجاء ادخال البريد الإلكتروني"),
+      password: yup
+        .string()
+        .required("الرجاء التاكد من ادخال كلمة المرور")
+        .min(3, "كلمة المرور يجب ان تكون اكبر من 6 أحرف"),
     }),
-    onSubmit: (values) => {
-      console.log(values);
-    },
+    onSubmit: values => login(values)
   });
-  console.log(formik);
   return (
     <div className={style.login}>
       <Container className="d-flex vh-100 flex-md-row align-items-center ">
@@ -34,7 +38,7 @@ const Login = () => {
           <h5 className="text-black mb-3">مرحبا بكم</h5>
           <Form onSubmit={formik.handleSubmit}>
             <Input
-              className='text-end'
+              className="text-end"
               error={formik.errors.email}
               touched={formik.touched.email}
               onBlur={formik.handleBlur}
@@ -42,7 +46,7 @@ const Login = () => {
               onChange={formik.handleChange}
               width={"100%"}
               label="البريد الإلكتروني"
-              type="email"
+              type="text"
               id="email"
               name="email"
               icon={<FaUserAlt />}
@@ -61,14 +65,19 @@ const Login = () => {
               name="password"
               icon={<AiFillLock />}
             />
-          <div  className="coll mt-2 d-flex flex-row justify-content-between align-items-center">
-            <ButtonSubmit type="submit" className="btn-main btn" disabled={!formik.isValid}>
-              تسجيل الدخول
-            </ButtonSubmit>
-            <Link className="m-0" href="#">
-              نسيت كلمة المرور
-            </Link>
-          </div>
+              {error && <p className="text-danger ">{error}</p>}
+            <div className="coll mt-2 d-flex flex-row justify-content-between align-items-center">
+              <ButtonSubmit
+                type="submit"
+                className="btn-main btn"
+                disabled={!formik.isValid || loading}
+              >
+                  {loading ? "جاري التحميل..." : "تسجيل الدخول"}
+                              </ButtonSubmit>
+              <Link className="m-0" href="#">
+                نسيت كلمة المرور
+              </Link>
+            </div>
           </Form>
         </div>
       </Container>

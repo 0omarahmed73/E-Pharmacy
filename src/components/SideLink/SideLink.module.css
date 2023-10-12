@@ -2,7 +2,7 @@
     color: white !important;
     text-decoration: none !important;
     background-color: var(--main2) !important;
-    padding: 7px 20px !important;
+    padding: 7px 50px !important;
     border-radius: 10px !important;
     box-shadow: 0 0 7px 0px #00000059 !important;
     font-weight: bold !important;
@@ -10,6 +10,11 @@
     transition: 0.3s;
     &:hover {
       scale: 1.04;
+    }
+    @media screen and (min-width: 560px) {
+      & {
+        padding: 7px 20px !important;
+      }
     }
   }
   :global(.active) {
