@@ -5,15 +5,43 @@ import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import MenuItem from '../../../components/MenuItem/MenuItem';
 import { GiMedicinePills, GiMedicines } from 'react-icons/gi';
 import { BiInjection } from 'react-icons/bi';
+import { useContext } from 'react';
+import { ShowContext } from '../../../context/ShowContext';
+import { useEffect } from 'react';
+import { AiFillRightCircle } from 'react-icons/ai';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 const Medicine = () => {
+  const { spinnerElement , spinner , setSpinner } = useContext(ShowContext);
+  useEffect(() => {
+    setSpinner(true);
+    const setTime = setTimeout(() => {
+      setSpinner(false);
+    }, 300);
+    return () => {
+      clearInterval(setTime)
+    }
+  } , [setSpinner]);
   useDocumentTitle(" الأدوية");
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      }}
       style={{ margin: "auto" }}
       className={style.dashboard + " d-flex flex-column px-sm-5 px-0 pb-4`"}
     >
-      <h1 className="mainTitle pb-2 pb-lg-0">الأدوية</h1>
-      <Row
+      {spinner && spinnerElement}
+      <div className="d-flex flex-row align-items-center mb-2 gap-2">
+        <Link to="/stock">
+          <AiFillRightCircle size={24} fill="#28465C" />
+        </Link>
+        <p className="mainTitle">الأدوية</p>
+      </div>      <Row
         lg="3"
         sm="1"
         md="2"
@@ -60,7 +88,24 @@ const Medicine = () => {
           />
         </Col>
       </Row>
-    </div>
+      <Row
+        lg="3"
+        sm="1"
+        md="2"
+        xs="1"
+        className="pt-md-2 justify-content-center d-flex"
+      >
+        <Col>
+          <MenuItem
+            title="اضافة دواء"
+            icon={<GiMedicinePills size={32} color="white" />}
+            padding="30px"
+            pt="mt-2 mt-md-0 mb-2"
+            to='/stock/medicines/add-medicine'
+          />
+        </Col>
+      </Row>
+    </motion.div>
   );
 };
 

@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toggle/style.css" // for ES6 modules
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import 'react-toastify/dist/ReactToastify.css';
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";

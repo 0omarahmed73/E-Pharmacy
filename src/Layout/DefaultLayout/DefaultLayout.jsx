@@ -15,7 +15,6 @@ import { ShowContext } from "../../context/ShowContext";
 const DefaultLayout = () => {
   const location = useLocation();
   const {dropDown , setDropDown} = useContext(ShowContext)
-  console.log(location)
   if (!localStorage.getItem("sidebar")) {
     localStorage.setItem("sidebar", false);
   }
@@ -24,15 +23,18 @@ const DefaultLayout = () => {
   return (
     <div className={style.default} onClick={() => setDropDown(false)}>
       <Row xs={'12'} className="m-auto">
-          <Sidebar show={show} />
+          <Sidebar />
         <Col>
-          <Navbar setShow={setShow} show={show} className='mb-5'/>
+          <Navbar className='mb-5'/>
           <Container className={location.pathname !== '/' ? 'pt-4' : 'pt-2'}  >
           <Outlet />
           </Container>
         </Col>
       </Row>
-      {show && <div className={style.overlay}  onClick={() => setShow(false)} />}
+      {show && <div className={style.overlay}  onClick={() => {
+        setShow(false)
+      }
+      } />}
     </div>
   );
 };

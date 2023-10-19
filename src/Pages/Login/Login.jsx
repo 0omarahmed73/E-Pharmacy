@@ -1,9 +1,8 @@
-import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Input from "../../components/input/Input";
 import { AiFillLock } from "react-icons/ai";
 import { FaUserAlt } from "react-icons/fa";
-import { Button, Container } from "react-bootstrap";
+import {  Container } from "react-bootstrap";
 import style from "./Login.module.css";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
@@ -12,10 +11,23 @@ import ButtonSubmit from "./../../components/ButtonSubmit";
 import useDocumentTitle from "../../hooks/useDocumentTitle";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
-import axiosApi from "../../data/axios";
+import { useEffect } from "react";
+import { ShowContext } from "../../context/ShowContext";
+import { motion } from 'framer-motion';
+import { ToastContainer } from "react-toastify";
 const Login = () => {
+    const { spinnerElement , spinner , setSpinner } = useContext(ShowContext);
+  useEffect(() => {
+    setSpinner(true);
+    const setTime = setTimeout(() => {
+      setSpinner(false);
+    }, 500);
+    return () => {
+      clearInterval(setTime)
+    }
+  } , [setSpinner]);
   useDocumentTitle("تسجيل الدخول");
-  const { login , error , loading } = useContext(AuthContext);
+  const { login , loading } = useContext(AuthContext);
   const formik = useFormik({
     validateOnMount: true,
     initialValues: {
@@ -32,7 +44,16 @@ const Login = () => {
     onSubmit: values => login(values)
   });
   return (
-    <div className={style.login}>
+    <motion.div
+    initial={{ scale: 0 }}
+    animate={{ scale: 1 }}
+    transition={{
+      type: "spring",
+      stiffness: 260,
+      damping: 20,
+    }}
+     className={style.login}>
+      {spinner && spinnerElement}
       <Container className="d-flex vh-100 flex-md-row align-items-center ">
         <div className={`${style.right} m-auto `}>
           <h5 className="text-black mb-3">مرحبا بكم</h5>
@@ -65,7 +86,6 @@ const Login = () => {
               name="password"
               icon={<AiFillLock />}
             />
-              {error && <p className="text-danger ">{error}</p>}
             <div className="coll mt-2 d-flex flex-row justify-content-between align-items-center">
               <ButtonSubmit
                 type="submit"
@@ -81,7 +101,8 @@ const Login = () => {
           </Form>
         </div>
       </Container>
-    </div>
+      <ToastContainer position="bottom-center" hideProgressBar  className='mb-2' rtl={true} />
+    </motion.div>
   );
 };
 

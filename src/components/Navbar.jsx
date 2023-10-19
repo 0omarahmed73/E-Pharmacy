@@ -6,9 +6,11 @@ import { AiFillBell } from "react-icons/ai";
 import Profile from "./Profile/Profile";
 import style from "../Layout/DefaultLayout/DefaultLayout.module.css";
 import { useState } from "react";
+import { ShowContext } from "../context/ShowContext";
+import { useContext } from "react";
 
-const Navbar = ({setShow , show , ...props}) => {
-
+const Navbar = ({ ...props}) => {
+  const {show , setShow} = useContext(ShowContext);
   return (
     <Row {...props}>
       <Col className={`${style.navAll} px-md-5 `}>

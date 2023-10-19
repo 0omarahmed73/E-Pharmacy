@@ -15,18 +15,25 @@ import MediSelected from "./../../../components/MediSelected/MediSelected";
 import { BsFillCalendarDateFill } from "react-icons/bs";
 import { ShowContext } from "../../../context/ShowContext";
 import axiosApi from "../../../data/axios";
-import AutoComplete from "../../../components/AutoComplete/AutoComplete";
+import { motion } from "framer-motion";
+import InputAutoComplete2 from "../../../components/InputAutoComplete2/InputAutoComplete2";
 const NewOrder = () => {
-  useDocumentTitle("إضافة طلبية جديدة");
-  const [items, setItems] = useState([]);
-  const [selectColor, setSelectColor] = useState([]);
-
-  const getMedicines = async () => {
-    const response = await axiosApi.get("../src/data/medicines.json");
-    const names = response.data.map((medi) => medi.brandName);
-    setItems(names.filter((el) => el !== ""));
+  const [change , setChange] = useState(false);
+  const falseChange = () => {
+    setChange(false);
   };
-
+  useDocumentTitle("إضافة طلبية جديدة");
+  const { spinnerElement, spinner, setSpinner } = useContext(ShowContext);
+  useEffect(() => {
+    setSpinner(true);
+    const setTime = setTimeout(() => {
+      setSpinner(false);
+    }, 300);
+    return () => {
+      clearInterval(setTime);
+    };
+  }, [setSpinner]);
+  const [items, setItems] = useState([]);
   const { show: show2 } = useContext(ShowContext);
   const [mode, setMode] = useState("");
   const [currentId, setId] = useState("");
@@ -37,23 +44,30 @@ const NewOrder = () => {
   const [supply, setSupply] = useState("");
   const [supplier, setSupplier] = useState("");
   const [show, setShow] = useState(false);
-  const [medicines, setMedicines] = useState([]);
+  const [medicines, setMedicines] = useState(sessionStorage.getItem(`medicines-${window.location.pathname}`) ? JSON.parse(sessionStorage.getItem(`medicines-${window.location.pathname}`)) : []);
   const handleClose = () => {
     setShow(false);
-    setSelectColor([]);
+    setName("");
     setQuantity("");
     setExpire("");
     setPrice("");
     setSupply("");
     setSupplier("");
   };
+  
+  const getMedicines = async () => {
+    const response = await axiosApi.get("../src/data/medicines.json");
+    let names = response.data.map((medi) => medi.brandName);
+    names = names.filter((el) => el !== "" && el.includes(name.toUpperCase()));
+    setItems(names);
+  };
+
   const handleShow = () => setShow(true);
   const formik = useFormik({
-    enableReinitialize: true,
     validateOnMount: true,
     initialValues: {
-      reqnum: "",
-      delivaryAuth: "",
+      reqnum: sessionStorage.getItem(`reqnum-${window.location.pathname}`) || "",
+      delivaryAuth: sessionStorage.getItem(`delivaryAuth-${window.location.pathname}`) || "",
     },
     validationSchema: yup.object().shape({
       reqnum: yup.number().required("الرجاء ادخال طلب الإمداد"),
@@ -66,35 +80,40 @@ const NewOrder = () => {
         medicine: { ...medicines },
       };
       console.log(values);
-      formik.resetForm();
       setMedicines([]);
+      formik.resetForm();
+      sessionStorage.clear();
+      formik.setValues({
+        reqnum: "",
+        delivaryAuth: "",
+      });
     },
+
   });
   const handleMedicines = (e) => {
     e.preventDefault();
-    setMedicines((d) => {
-      return [
-        ...d,
-        {
-          id: new Date().getTime(),
-          name : selectColor[0] ,
-          quantity,
-          expire,
-          price,
-          supply,
-          supplier,
-        },
-      ];
-    });
+    const getMedi = [...medicines ,{
+      id: new Date().getTime(),
+      name: name,
+      quantity,
+      expire,
+      price,
+      supply,
+      supplier,
+    }]
+    setMedicines(getMedi);
+    sessionStorage.setItem(`medicines-${window.location.pathname}`, JSON.stringify(getMedi));
     handleClose();
   };
   const handleDelete = (id) => {
     const newMedicine = medicines.filter((medi) => medi.id !== id);
     setMedicines(newMedicine);
+    sessionStorage.setItem(`medicines-${window.location.pathname}`, JSON.stringify(newMedicine));
+
   };
   const handleEdit = (id, name) => {
     const medicine = medicines.find((medi) => medi.id === id);
-    setSelectColor([name]);
+    setName(medicine.name);
     setQuantity(medicine.quantity);
     setExpire(medicine.expire);
     setPrice(medicine.price);
@@ -105,18 +124,36 @@ const NewOrder = () => {
   const saveChanges = (id) => {
     const newMedicine = medicines.map((medi) => {
       if (medi.id === id) {
-        return { ...medi, name : selectColor[0], quantity, expire, price, supply, supplier };
+        return {
+          ...medi,
+          name: name,
+          quantity,
+          expire,
+          price,
+          supply,
+          supplier,
+        };
       }
+      sessionStorage.setItem(`medicines-${window.location.pathname}`, JSON.stringify(newMedicine));
+
       return medi;
     });
     setMedicines(newMedicine);
     handleClose();
   };
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      }}
       style={{ margin: "auto" }}
       className={`${style.newOrder} d-flex flex-column px-sm-5 px-0 pb-4 w-md-75 w-sm-100 w-lg-100`}
     >
+      {spinner && spinnerElement}
       <div className="d-flex flex-row align-items-center mb-2 gap-2">
         <Link to="/stock">
           <AiFillRightCircle size={24} fill="#28465C" />
@@ -155,7 +192,7 @@ const NewOrder = () => {
               icon={<AiFillLock />}
             />
             <div className={`${style.mediTable} overflow-y-scroll mt-2 px-1`}>
-              <Table Table striped hover>
+              <Table striped hover>
                 <thead>
                   <tr>
                     <th className={show2 ? "showFonts" : "noshowFonts"}>#</th>
@@ -200,7 +237,7 @@ const NewOrder = () => {
                           handleEdit={handleEdit}
                         />
                       ))
-                    : ""}
+                    : null}
                 </tbody>
               </Table>
             </div>
@@ -254,16 +291,28 @@ const NewOrder = () => {
             <Form onSubmit={handleMedicines}>
               <Row className="flex-wrap">
                 <Col>
-                  <AutoComplete
-                    onSearch={getMedicines}
-                    className="mt-2"
-                    id="example"
-                    onChange={setSelectColor}
-                    options={items.sort()}
-                    placeholder=""
-                    selected={selectColor}
+                  <InputAutoComplete2
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setChange(true);
+                    }}
+                    className="text-end mt-2"
+                    width={"100%"}
                     label={"اسم الدواء"}
+                    type="text"
+                    id="medicine"
+                    name="medicine"
+                    items={items.sort()}
+                    dropFunction={getMedicines}
+                    direction={"ltr"}
                     icon={<GiMedicinePills />}
+                    linkAdded={"/stock/medicines/add-medicine?return=true"}
+                    message={"الدواء غير موجود , هل تريد اضافته؟"}
+                    setValue={setName}
+                    formik={false}
+                    change={change}
+                    falseChange={falseChange}
                   />
                 </Col>
                 <Col>
@@ -348,7 +397,7 @@ const NewOrder = () => {
                 ) : (
                   <ButtonSubmit
                     disabled={
-                      !selectColor[0] ||
+                      !name ||
                       !quantity.trim() ||
                       !expire.trim() ||
                       !supply.trim() ||
@@ -370,7 +419,7 @@ const NewOrder = () => {
         </Modal>,
         document.getElementById("modal")
       )}
-    </div>
+    </motion.div>
   );
 };
 

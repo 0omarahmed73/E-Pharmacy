@@ -18,15 +18,53 @@ import ButtonSubmit from "../../../components/ButtonSubmit";
 import useDocumentTitle from "../../../hooks/useDocumentTitle";
 import Select from "../../../components/Select/Select";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MediSelected from "./../../../components/MediSelected/MediSelected";
+import { useContext } from "react";
+import { ShowContext } from "../../../context/ShowContext";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import InputAutoComplete2 from "../../../components/InputAutoComplete2/InputAutoComplete2";
+import axiosApi from "../../../data/axios";
 const Dispense = () => {
+  const location = useLocation();
+  const { spinnerElement, spinner, setSpinner } = useContext(ShowContext);
+  useEffect(() => {
+    setSpinner(true);
+    const setTime = setTimeout(() => {
+      setSpinner(false);
+    }, 300);
+    return () => {
+      clearInterval(setTime);
+    };
+  }, [setSpinner]);
+  const [change, setChange] = useState(false);
+  const [change2, setChange2] = useState(false);
+  const falseChange = () => {
+    setChange(false);
+  };
+  const falseChange2 = () => {
+    setChange2(false);
+  };
+  const [items, setItems] = useState([]);
+  const getMedicines = async () => {
+    const response = await axiosApi.get("../src/data/medicines.json");
+    let names = response.data.map((medi) => medi.brandName);
+    names = names.filter((el) => el !== "" && el.includes(name.toUpperCase()));
+    setItems(names);
+  };
   const [mode, setMode] = useState("");
   const [currentId, setId] = useState("");
   const [name, setName] = useState("");
+  const [stds, setStds] = useState([]);
+  const [allValues , setAllValues] = useState({})
   const [quantity, setQuantity] = useState("");
   const [show, setShow] = useState(false);
-  const [medicines, setMedicines] = useState([]);
+  const [medicines, setMedicines] = useState(
+    JSON.parse(
+      sessionStorage.getItem(`medicines-${window.location.pathname}`)
+    ) || []
+  );
   const handleClose = () => {
     setShow(false);
     setName("");
@@ -35,28 +73,26 @@ const Dispense = () => {
   const handleShow = () => setShow(true);
   useDocumentTitle("صرف الأدوية");
   const formik = useFormik({
-    enableReinitialize: true,
     validateOnMount: true,
     initialValues: {
-      stdname: "",
-      phone: "",
-      national: "",
-      collage: "",
-      ["university-year"]: "",
-      prescriptionNumber: "",
-      disease: "",
-      prescriptionType: "",
+      stdname: sessionStorage.getItem(`stdname-${location.pathname}`) || "",
+      phone: sessionStorage.getItem(`phone-${location.pathname}`) || "",
+      national: sessionStorage.getItem(`national-${location.pathname}`) || "",
+      collage: sessionStorage.getItem(`collage-${location.pathname}`) || "",
+      ["university-year"]:
+        sessionStorage.getItem(`university-year-${location.pathname}`) || "",
+      prescriptionNumber:
+        sessionStorage.getItem(`prescriptionNumber-${location.pathname}`) || "",
+      prescriptionType:
+        sessionStorage.getItem(`prescriptionType-${location.pathname}`) || "",
+      disease: sessionStorage.getItem(`disease-${location.pathname}`) || "",
     },
     validationSchema: yup.object().shape({
       stdname: yup.string().required("الرجاء ادخال إسم الطالب"),
       phone: yup
         .string()
         .required("الرجاء ادخال رقم الهاتف")
-        .test(
-          "maxDigits",
-          "الرجاء ادخال رقم هاتف صحيح",
-          (value) => value.length === 10
-        ),
+        ,
       national: yup
         .string()
         .required("الرجاء ادخال رقم القومي")
@@ -82,18 +118,66 @@ const Dispense = () => {
       console.log(values);
       formik.resetForm();
       setMedicines([]);
+      sessionStorage.clear();
+      formik.setValues({
+        stdname: "",
+        phone: "",
+        national: "",
+        collage: "",
+        ["university-year"]: "",
+        prescriptionNumber: "",
+        prescriptionType: "",
+        disease: "",
+      });
     },
   });
   const handleMedicines = (e, name, quantity) => {
     e.preventDefault();
-    setMedicines((d) => {
-      return [...d, { id: new Date().getTime(), name, quantity }];
-    });
+    const getMedi = [
+      ...medicines,
+      { id: new Date().getTime(), name, quantity },
+    ];
+    setMedicines(getMedi);
+    sessionStorage.setItem(
+      `medicines-${window.location.pathname}`,
+      JSON.stringify(getMedi)
+    );
     handleClose();
+  };
+  const addStds = () => {
+    const stdd = [
+      {
+        name: "محمد عبد الرحمن محمد",
+        phone: "01111111111",
+        national: 12345678912345,
+        collage: "طب بشري",
+        ["university-year"]: "الفرقة الرابعة",
+      },
+      {
+        name : 'عمر احمد سعيد السيد',
+        phone : '01516111111',
+        national : 12356777712345,
+        collage : 'هندسة',
+        ["university-year"] : 'الفرقة الرابعة'
+      },
+      {
+        name : 'احمد محمد احمد',
+        phone : '01024197972',
+        national : 12353282124532,
+        collage : 'هندسة',
+        ["university-year"] : 'الفرقة الرابعة'
+      },
+    ].filter((el) => el.name.includes(formik.values.stdname));
+    setAllValues(stdd)
+    setStds(stdd.map((el) => el.name));
   };
   const handleDelete = (id) => {
     const newMedicine = medicines.filter((medi) => medi.id !== id);
     setMedicines(newMedicine);
+    sessionStorage.setItem(
+      `medicines-${window.location.pathname}`,
+      JSON.stringify(newMedicine)
+    );
   };
   const handleEdit = (id) => {
     const medicine = medicines.find((medi) => medi.id === id);
@@ -109,35 +193,62 @@ const Dispense = () => {
       return medi;
     });
     setMedicines(newMedicine);
+    sessionStorage.setItem(
+      `medicines-${window.location.pathname}`,
+      JSON.stringify(newMedicine)
+    );
+
     handleClose();
   };
   return (
-    <div
-        style={{ margin: "auto" }}
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      }}
+      style={{ margin: "auto" }}
       className={`${style.dispense} d-flex flex-column px-sm-5 px-0 pb-4`}
     >
+      {spinner && spinnerElement}
       <div className="d-flex flex-row align-items-center mb-2 gap-2">
         <Link to="/stock">
           <AiFillRightCircle size={24} fill="#28465C" />
         </Link>
         <p className="mainTitle">صرف الأدوية</p>
       </div>
-      <Form onSubmit={formik.handleSubmit}>
+      <Form autoSave={"on"} onSubmit={formik.handleSubmit}>
         <Row lg="3" xs="1" md="2">
           <Col>
-            <Input
-              className="text-end"
+            <InputAutoComplete2
               error={formik.errors.stdname}
               touched={formik.touched.stdname}
               onBlur={formik.handleBlur}
               value={formik.values.stdname}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                formik.handleChange(e);
+                setChange2(true);
+              }}
+              className="text-end"
               width={"100%"}
               label="إسم الطالب"
               type="text"
               id="stdname"
               name="stdname"
+              items={stds}
+              allValues={allValues}
+              linkedAttr={["phone" , "national" , "collage" , "university-year"] }
+              dropFunction={addStds}
+              direction={"ltr"}
               icon={<FaUserAlt />}
+              linkAdded={"/stock/new-order"}
+              message={"الطالب غير مضاف , هل تريد اضافته؟"}
+              setValue={formik.setFieldValue}
+              formik={true}
+              change={change2}
+              falseChange={falseChange2}
             />
             <Input
               error={formik.errors.national}
@@ -190,7 +301,7 @@ const Dispense = () => {
               width={"100%"}
               className="mt-2 text-end"
               label="رقم الهاتف"
-              type="number"
+              type="text"
               id="phone"
               name="phone"
               icon={<AiFillPhone />}
@@ -251,7 +362,7 @@ const Dispense = () => {
                             handleEdit={handleEdit}
                           />
                         ))
-                      : ""}
+                      : null}
                   </tbody>
                 </Table>
               </div>
@@ -322,16 +433,28 @@ const Dispense = () => {
             <Form onSubmit={(e) => handleMedicines(e, name, quantity)}>
               <Row>
                 <Col>
-                  <Input
+                  <InputAutoComplete2
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="text-end mt-2 mt-md-0"
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setChange(true);
+                    }}
+                    className="text-end"
                     width={"100%"}
-                    label="اسم الدواء"
+                    label={"اسم الدواء"}
                     type="text"
-                    id="mediname"
-                    name="mediname"
+                    id="medicine"
+                    name="medicine"
+                    items={items.sort()}
+                    dropFunction={getMedicines}
+                    direction={"ltr"}
                     icon={<GiMedicinePills />}
+                    linkAdded={"/stock/medicines/add-medicine?return=true"}
+                    message={"الدواء غير موجود , هل تريد اضافته؟"}
+                    setValue={setName}
+                    formik={false}
+                    change={change}
+                    falseChange={falseChange}
                   />
                 </Col>
                 <Col>
@@ -374,7 +497,7 @@ const Dispense = () => {
         </Modal>,
         document.getElementById("modal")
       )}
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import style from "./AddAccount.module.css";
 import Input from "../../components/input/Input";
@@ -11,17 +11,31 @@ import * as yup from "yup";
 import ButtonSubmit from "../../components/ButtonSubmit";
 import SVGNewAccount from "../../components/SVGNewAccount";
 import useDocumentTitle from "../../hooks/useDocumentTitle";
+import { ShowContext } from "../../context/ShowContext";
+import { motion } from 'framer-motion';
 const AddAccount = () => {
+  const { spinnerElement , spinner , setSpinner } = useContext(ShowContext);
+  useEffect(() => {
+    setSpinner(true);
+    const setTime = setTimeout(() => {
+      setSpinner(false);
+    }, 300);
+    return () => {
+      clearInterval(setTime)
+    }
+  } , [setSpinner]);
   useDocumentTitle('إضافة حساب جديد')
   const formik = useFormik({
     validateOnMount: true,
     initialValues: {
-      name: "",
-      email: "",
-      password: "",
-      phone: "",
-      national: "",
-      type: "",
+      name: sessionStorage.getItem(`name-${window.location.pathname}`) || "",
+      email: sessionStorage.getItem(`email-${window.location.pathname}`) || "",
+      password:
+        sessionStorage.getItem(`password-${window.location.pathname}`) || "",
+      phone: sessionStorage.getItem(`phone-${window.location.pathname}`) || "",
+      national:
+        sessionStorage.getItem(`national-${window.location.pathname}`) || "",
+      type: sessionStorage.getItem(`type-${window.location.pathname}`) || "",
     },
     validationSchema: yup.object().shape({
       email: yup
@@ -39,10 +53,28 @@ const AddAccount = () => {
     }),
     onSubmit: (values) => {
       console.log(values);
+      formik.resetForm();
+      formik.setValues({
+        name: "",
+        email: "",
+        password: "",
+        phone: "",
+        national: "",
+        type: "",
+      });
     },
   });
   return (
-    <div style={{margin : 'auto'} } className={`${style.addAccount} d-flex flex-column px-sm-5 px-0`}>
+    <motion.div
+    initial={{ scale: 0 }}
+    animate={{ scale: 1 }}
+    transition={{
+      type: "spring",
+      stiffness: 260,
+      damping: 20,
+    }}
+     style={{margin : 'auto'} } className={`${style.addAccount} d-flex flex-column px-sm-5 px-0`}>
+      {spinner && spinnerElement}
       <p className="mainTitle mb-2">إضافة حساب جديد</p>
       <Form onSubmit={formik.handleSubmit} className="pb-4">
         <Row lg="2" xs="1" md='2'>
@@ -149,7 +181,7 @@ const AddAccount = () => {
           </Col>
         </Row>
       </Form>
-    </div>
+    </motion.div>
   );
 };
 

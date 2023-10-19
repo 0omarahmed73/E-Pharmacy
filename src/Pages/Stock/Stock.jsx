@@ -4,13 +4,34 @@ import { FaAddressBook, FaAdn } from 'react-icons/fa';
 import { Col } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import MenuItem from '../../components/MenuItem/MenuItem';
+import { useContext } from 'react';
+import { ShowContext } from '../../context/ShowContext';
+import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 const Stock = () => {
+  const { spinnerElement , spinner , setSpinner } = useContext(ShowContext);
+  useEffect(() => {
+    setSpinner(true);
+    const setTime = setTimeout(() => {
+      setSpinner(false);
+    }, 300);
+    return () => {
+      clearInterval(setTime)
+    }
+  } , [setSpinner]);
   useDocumentTitle(" إدارة المخازن");
   return (
-    <div
-      style={{ margin: "auto" }}
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      }}      style={{ margin: "auto" }}
       className={style.dashboard + " d-flex flex-column px-sm-5 px-0 pb-4`"}
     >
+      {spinner && spinnerElement}
       <h1 className="mainTitle pb-2 pb-lg-0">إدارة المخازن</h1>
       <Row
         lg="3"
@@ -74,7 +95,7 @@ const Stock = () => {
           />
         </Col>
       </Row>
-    </div>
+    </motion.div>
   );
 };
 
